@@ -32,5 +32,4 @@ build/
 ### VS Code ###
 .vscode/
 
-*.log
-.env
+src/main/resources/application-local.properties

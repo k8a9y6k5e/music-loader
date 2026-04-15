@@ -6,13 +6,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @RestController
 @RequestMapping("/music")
 public class MusicController {
+
+    @Autowired
+    private MusicService service;
+
     @PostMapping
     public ResponseEntity<MusicEntity> create(@RequestBody @Valid CreateMusicDTO dto) {
-        MusicEntity result = MusicService.create(dto);
+        MusicEntity result = service.create(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 }

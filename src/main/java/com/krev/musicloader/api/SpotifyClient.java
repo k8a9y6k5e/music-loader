@@ -1,15 +1,14 @@
 package com.krev.musicloader.api;
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.Getter;
+import org.springframework.web.util.UriComponentsBuilder;
+import java.net.URI;
 
 import java.util.Base64;
 
@@ -49,18 +48,45 @@ public class SpotifyClient {
 
         RestTemplate restTemplate = new RestTemplate();
 
-        ResponseEntity<SpotifyMap> response = restTemplate.postForEntity(
+        ResponseEntity<SpotifyAuthMap> response = restTemplate.postForEntity(
                 "https://accounts.spotify.com/api/token",
                 request,
-                SpotifyMap.class
+                SpotifyAuthMap.class
         );
 
         token = response.getBody().getAccess_token();
     }
 
-    private void tokenExistence() {
+    private void ensureToken() {
         if(token == null) auth();
     }
 
-    
+    public SpotifySearchMap searchMusic(String name) {
+        ensureToken();
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+
+        httpHeaders.set("Authorization", "Bearer " + token);
+
+        HttpEntity<Void> request = new HttpEntity<>(httpHeaders);
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        URI uri = UriComponentsBuilder
+                .fromUriString("https://api.spotify.com/v1/search")
+                .queryParam("q", "track:"+name)
+                .queryParam("type", "track")
+                .build()
+                .encode()
+                .toUri();
+
+        ResponseEntity<SpotifySearchMap> response = restTemplate.exchange(
+                uri,
+                HttpMethod.GET,
+                request,
+                SpotifySearchMap.class
+                );
+
+        return response.getBody();
+    }
 }

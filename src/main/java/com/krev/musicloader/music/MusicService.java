@@ -1,5 +1,6 @@
 package com.krev.musicloader.music;
 import com.krev.musicloader.api.dto.SearchDto.Artists;
+import com.krev.musicloader.api.dto.SearchDto.ExternalUrls;
 import com.krev.musicloader.music.dto.CreateMusicDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,16 +24,24 @@ public class MusicService {
 
         music.setName(dto.getName());
 
-        music.setUrl(musicSearch.getTracks().getItems().get(0).getExternal_urls().getSpotify());
+        music.setUrl(getUrl(musicSearch));
 
+        music.setArtist(getArtists(musicSearch));
+
+        return musicRepository.save(music);
+    }
+
+    private String getUrl(SpotifySearchDto musicSearched) {
+        return musicSearched.getTracks().getItems().get(0).getExternal_urls().getSpotify();
+    }
+
+    private String getArtists(SpotifySearchDto musicSearched) {
         List<String> artistsNames = new ArrayList<>();
 
-        for (Artists artists : musicSearch.getTracks().getItems().get(0).getArtists()) {
+        for (Artists artists : musicSearched.getTracks().getItems().get(0).getArtists()) {
             artistsNames.add(artists.getName());
         }
 
-        music.setArtist(String.join(", ", artistsNames));
-
-        return musicRepository.save(music);
+        return String.join(", ", artistsNames);
     }
 }

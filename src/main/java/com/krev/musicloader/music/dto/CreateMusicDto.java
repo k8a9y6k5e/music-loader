@@ -3,7 +3,7 @@ import lombok.Data;
 import jakarta.validation.constraints.NotBlank;
 
 @Data
-public class CreateMusicDTO {
+public class CreateMusicDto {
     @NotBlank(message = "name of music can't be empty")
     private String name;
 }

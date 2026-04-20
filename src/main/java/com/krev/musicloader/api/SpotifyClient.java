@@ -1,5 +1,7 @@
 package com.krev.musicloader.api;
 
+import com.krev.musicloader.api.dto.SpotifyAuthDto;
+import com.krev.musicloader.api.dto.SpotifySearchDto;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -48,10 +50,10 @@ public class SpotifyClient {
 
         RestTemplate restTemplate = new RestTemplate();
 
-        ResponseEntity<SpotifyAuthMap> response = restTemplate.postForEntity(
+        ResponseEntity<SpotifyAuthDto> response = restTemplate.postForEntity(
                 "https://accounts.spotify.com/api/token",
                 request,
-                SpotifyAuthMap.class
+                SpotifyAuthDto.class
         );
 
         token = response.getBody().getAccess_token();
@@ -61,7 +63,7 @@ public class SpotifyClient {
         if(token == null) auth();
     }
 
-    public SpotifySearchMap searchMusic(String name) {
+    public SpotifySearchDto searchMusic(String name) {
         ensureToken();
 
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -80,11 +82,11 @@ public class SpotifyClient {
                 .encode()
                 .toUri();
 
-        ResponseEntity<SpotifySearchMap> response = restTemplate.exchange(
+        ResponseEntity<SpotifySearchDto> response = restTemplate.exchange(
                 uri,
                 HttpMethod.GET,
                 request,
-                SpotifySearchMap.class
+                SpotifySearchDto.class
                 );
 
         return response.getBody();

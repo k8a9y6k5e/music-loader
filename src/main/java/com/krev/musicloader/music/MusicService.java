@@ -1,12 +1,12 @@
 package com.krev.musicloader.music;
 import com.krev.musicloader.api.dto.SearchDto.Artists;
-import com.krev.musicloader.api.dto.SearchDto.ExternalUrls;
-import com.krev.musicloader.music.dto.CreateMusicDTO;
+import com.krev.musicloader.music.dto.CreateMusicDto;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.krev.musicloader.api.SpotifyClient;
 import com.krev.musicloader.api.dto.SpotifySearchDto;
-
+import org.springframework.data.domain.Pageable;
 import java.util.*;
 
 @Service
@@ -17,7 +17,7 @@ public class MusicService {
     @Autowired
     private SpotifyClient spotifyClient;
 
-    public MusicEntity create(CreateMusicDTO dto) {
+    public MusicEntity create(CreateMusicDto dto) {
         MusicEntity music = new MusicEntity();
 
         SpotifySearchDto musicSearch = spotifyClient.searchMusic(dto.getName());
@@ -43,5 +43,9 @@ public class MusicService {
         }
 
         return String.join(", ", artistsNames);
+    }
+
+    public Page<MusicEntity> list(Pageable pageable) {
+        return musicRepository.findAll(pageable);
     }
 }

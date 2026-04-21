@@ -27,6 +27,9 @@ public class MusicEntity {
     @Column(name = "artist", nullable = false)
     private String artist;
 
+    @Column(name = "searchIndex", nullable = false)
+    private Integer searchIndex;
+
     @CreatedDate
     private LocalDateTime createdAt;
 

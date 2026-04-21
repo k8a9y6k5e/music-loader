@@ -1,5 +1,6 @@
 package com.krev.musicloader.music;
 import com.krev.musicloader.music.dto.CreateMusicDto;
+import com.krev.musicloader.music.dto.PatchUpdateMusicDto;
 import com.krev.musicloader.music.dto.PutUpdateMusicDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -42,5 +43,10 @@ public class MusicController {
     @PutMapping("/{id}")
     public ResponseEntity<MusicEntity> putUpdate(@PathVariable Long id, @RequestBody @Valid PutUpdateMusicDto dto) {
         return ResponseEntity.status(HttpStatus.OK).body(service.putUpdate(id, dto));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<MusicEntity> patchUpdate(@PathVariable Long id, @RequestBody @Valid PatchUpdateMusicDto dto) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.patchUpdate(id, dto));
     }
 }

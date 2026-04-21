@@ -28,21 +28,23 @@ public class MusicService {
 
         music.setName(dto.getName());
 
-        music.setUrl(getUrl(musicSearch));
+        music.setUrl(getUrl(musicSearch, 0));
 
-        music.setArtist(getArtists(musicSearch));
+        music.setArtist(getArtists(musicSearch, 0));
+
+        music.setSearchIndex(0);
 
         return musicRepository.save(music);
     }
 
-    private String getUrl(SpotifySearchDto musicSearched) {
-        return musicSearched.getTracks().getItems().get(0).getExternal_urls().getSpotify();
+    private String getUrl(SpotifySearchDto musicSearched, Integer track) {
+        return musicSearched.getTracks().getItems().get(track).getExternal_urls().getSpotify();
     }
 
-    private String getArtists(SpotifySearchDto musicSearched) {
+    private String getArtists(SpotifySearchDto musicSearched, Integer track) {
         List<String> artistsNames = new ArrayList<>();
 
-        for (Artists artists : musicSearched.getTracks().getItems().get(0).getArtists()) {
+        for (Artists artists : musicSearched.getTracks().getItems().get(track).getArtists()) {
             artistsNames.add(artists.getName());
         }
 
@@ -68,9 +70,9 @@ public class MusicService {
 
         result.setName(dto.getName());
 
-        result.setUrl(getUrl(search));
+        result.setUrl(getUrl(search, 0));
 
-        result.setArtist(getArtists(search));
+        result.setArtist(getArtists(search, 0));
 
         return musicRepository.save(result);
     }
@@ -84,10 +86,30 @@ public class MusicService {
         if(dto.getResearch()) {
             SpotifySearchDto search = spotifyClient.searchMusic(dto.getName());
 
-            result.setUrl(getUrl(search));
+            result.setUrl(getUrl(search, 0));
 
-            result.setArtist(getArtists(search));
+            result.setArtist(getArtists(search, 0));
         }
+
+        return musicRepository.save(result);
+    }
+
+    public MusicEntity nextMusicToSave (Long id) {
+        MusicEntity result = search(id);
+
+        SpotifySearchDto search = spotifyClient.searchMusic(result.getName());
+
+        Integer searchQuantity = search.getTracks().getItems().toArray().length;
+
+        if(result.getSearchIndex() == searchQuantity){
+            result.setSearchIndex(0);
+        }
+
+        result.setUrl(getUrl(search, result.getSearchIndex()));
+
+        result.setArtist(getArtists(search, result.getSearchIndex()));
+
+        result.setSearchIndex(result.getSearchIndex()+1);
 
         return musicRepository.save(result);
     }

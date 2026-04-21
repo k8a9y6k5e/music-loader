@@ -31,4 +31,10 @@ public class MusicController {
     public ResponseEntity<MusicEntity> search(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(service.search(id));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    }
 }

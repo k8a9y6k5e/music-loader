@@ -54,4 +54,8 @@ public class MusicService {
     public MusicEntity search(Long id) {
         return musicRepository.findById(id).orElseThrow(() -> new NotFoundException("Music not founded"));//change there
     }
+
+    public void delete(Long id) {
+        musicRepository.deleteById(id);
+    }
 }

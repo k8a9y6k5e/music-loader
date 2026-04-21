@@ -2,6 +2,7 @@ package com.krev.musicloader.music;
 import com.krev.musicloader.api.dto.SearchDto.Artists;
 import com.krev.musicloader.exception.NotFoundException;
 import com.krev.musicloader.music.dto.CreateMusicDto;
+import com.krev.musicloader.music.dto.PatchUpdateMusicDto;
 import com.krev.musicloader.music.dto.PutUpdateMusicDto;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -70,6 +71,23 @@ public class MusicService {
         result.setUrl(getUrl(search));
 
         result.setArtist(getArtists(search));
+
+        return musicRepository.save(result);
+    }
+
+    public MusicEntity patchUpdate (Long id, PatchUpdateMusicDto dto) {
+        MusicEntity result = search(id);
+
+        if(dto.getName() != null)
+            result.setName(dto.getName());
+
+        if(dto.getResearch()) {
+            SpotifySearchDto search = spotifyClient.searchMusic(dto.getName());
+
+            result.setUrl(getUrl(search));
+
+            result.setArtist(getArtists(search));
+        }
 
         return musicRepository.save(result);
     }

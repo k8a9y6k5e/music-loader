@@ -5,6 +5,7 @@ import com.krev.musicloader.music.dto.CreateMusicDto;
 import com.krev.musicloader.music.dto.PatchUpdateMusicDto;
 import com.krev.musicloader.music.dto.PutUpdateMusicDto;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.krev.musicloader.api.SpotifyClient;
@@ -97,7 +98,9 @@ public class MusicService {
     public MusicEntity nextMusicToSave (Long id) {
         MusicEntity result = search(id);
 
-        SpotifySearchDto search = spotifyClient.searchMusic(result.getName());
+        ResponseEntity<SpotifySearchDto> searchResponse = spotifyClient.searchMusic(result.getName());
+
+        SpotifySearchDto search = searchResponse.getBody();
 
         Integer searchQuantity = search.getTracks().getItems().toArray().length;
 

@@ -6,5 +6,6 @@ import lombok.Data;
 @Data
 public class SpotifySearchDto {
     private Tracks tracks;
+    private String error = null;
 }
 

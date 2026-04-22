@@ -63,7 +63,7 @@ public class SpotifyClient {
         if(token == null) auth();
     }
 
-    public SpotifySearchDto searchMusic(String name) {
+    public ResponseEntity<SpotifySearchDto> searchMusic(String name) {
         ensureToken();
 
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -89,6 +89,19 @@ public class SpotifyClient {
                 SpotifySearchDto.class
                 );
 
-        return response.getBody();
+        response = nullVerification(response);
+
+        return response;
     }
+
+    private ResponseEntity<SpotifySearchDto> nullVerification(ResponseEntity<SpotifySearchDto> response) {
+        if(response.getBody().getTracks().getItems().toArray().length == 0){
+            response.getBody().setError("Music not founded");
+            ResponseEntity<SpotifySearchDto> errorResponse = new ResponseEntity<SpotifySearchDto>(response.getBody(), HttpStatus.NOT_FOUND);
+
+            return errorResponse;
+        }
+
+        return response;
+    };
 }

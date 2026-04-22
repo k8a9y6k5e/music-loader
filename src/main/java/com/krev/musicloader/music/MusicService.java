@@ -5,6 +5,7 @@ import com.krev.musicloader.music.dto.CreateMusicDto;
 import com.krev.musicloader.music.dto.PatchUpdateMusicDto;
 import com.krev.musicloader.music.dto.PutUpdateMusicDto;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,11 @@ public class MusicService {
     public MusicEntity create(CreateMusicDto dto) {
         MusicEntity music = new MusicEntity();
 
-        SpotifySearchDto musicSearch = spotifyClient.searchMusic(dto.getName());
+        ResponseEntity<SpotifySearchDto> musicSearchResponse = spotifyClient.searchMusic(dto.getName());
+
+        responseStatusValidation(musicSearchResponse);
+
+        SpotifySearchDto musicSearch = musicSearchResponse.getBody();
 
         music.setName(dto.getName());
 
@@ -67,7 +72,11 @@ public class MusicService {
     public MusicEntity putUpdate (Long id, PutUpdateMusicDto dto) {
         MusicEntity result = search(id);
 
-        SpotifySearchDto search = spotifyClient.searchMusic(dto.getName());
+        ResponseEntity<SpotifySearchDto> searchResponse = spotifyClient.searchMusic(result.getName());
+
+        responseStatusValidation(searchResponse);
+
+        SpotifySearchDto search = searchResponse.getBody();
 
         result.setName(dto.getName());
 
@@ -85,7 +94,11 @@ public class MusicService {
             result.setName(dto.getName());
 
         if(dto.getResearch()) {
-            SpotifySearchDto search = spotifyClient.searchMusic(dto.getName());
+            ResponseEntity<SpotifySearchDto> searchResponse = spotifyClient.searchMusic(result.getName());
+
+            responseStatusValidation(searchResponse);
+
+            SpotifySearchDto search = searchResponse.getBody();
 
             result.setUrl(getUrl(search, 0));
 
@@ -99,6 +112,8 @@ public class MusicService {
         MusicEntity result = search(id);
 
         ResponseEntity<SpotifySearchDto> searchResponse = spotifyClient.searchMusic(result.getName());
+
+        responseStatusValidation(searchResponse);
 
         SpotifySearchDto search = searchResponse.getBody();
 
@@ -115,5 +130,11 @@ public class MusicService {
         result.setSearchIndex(result.getSearchIndex()+1);
 
         return musicRepository.save(result);
+    }
+
+    private void responseStatusValidation(ResponseEntity<SpotifySearchDto> response){
+        if(response.getStatusCode() == HttpStatus.NOT_FOUND) {
+            throw new NotFoundException("Music not founded");
+        }
     }
 }

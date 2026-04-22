@@ -1,7 +1,7 @@
-package com.krev.musicloader.api;
+package com.krev.musicloader.api.spotify;
 
-import com.krev.musicloader.api.dto.SpotifyAuthDto;
-import com.krev.musicloader.api.dto.SpotifySearchDto;
+import com.krev.musicloader.api.spotify.dto.SpotifyAuthDto;
+import com.krev.musicloader.api.spotify.dto.SpotifySearchDto;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;

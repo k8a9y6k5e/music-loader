@@ -1,5 +1,5 @@
 package com.krev.musicloader.music;
-import com.krev.musicloader.api.dto.SearchDto.Artists;
+import com.krev.musicloader.api.spotify.dto.SearchDto.Artists;
 import com.krev.musicloader.exception.NotFoundException;
 import com.krev.musicloader.music.dto.CreateMusicDto;
 import com.krev.musicloader.music.dto.PatchUpdateMusicDto;
@@ -9,8 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.krev.musicloader.api.SpotifyClient;
-import com.krev.musicloader.api.dto.SpotifySearchDto;
+import com.krev.musicloader.api.spotify.SpotifyClient;
+import com.krev.musicloader.api.spotify.dto.SpotifySearchDto;
 import org.springframework.data.domain.Pageable;
 import java.util.*;
 import java.lang.Long;

@@ -1,4 +1,4 @@
-package com.krev.musicloader.api.dto;
+package com.krev.musicloader.api.spotify.dto;
 
 import lombok.Data;
 

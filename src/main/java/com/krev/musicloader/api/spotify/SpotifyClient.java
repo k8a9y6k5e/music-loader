@@ -1,7 +1,10 @@
 package com.krev.musicloader.api.spotify;
 
+import com.krev.musicloader.api.MusicSearchDto;
+import com.krev.musicloader.api.spotify.dto.SearchDto.Artists;
 import com.krev.musicloader.api.spotify.dto.SpotifyAuthDto;
 import com.krev.musicloader.api.spotify.dto.SpotifySearchDto;
+import com.krev.musicloader.exception.NotFoundException;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -12,7 +15,9 @@ import lombok.Getter;
 import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 @Component
 public class SpotifyClient {
@@ -63,7 +68,7 @@ public class SpotifyClient {
         if(token == null) auth();
     }
 
-    public ResponseEntity<SpotifySearchDto> searchMusic(String name) {
+    public MusicSearchDto searchMusic(String name) {
         ensureToken();
 
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -89,19 +94,30 @@ public class SpotifyClient {
                 SpotifySearchDto.class
                 );
 
-        response = nullVerification(response);
+        nullVerification(response);
 
-        return response;
+        MusicSearchDto musicSearch = new MusicSearchDto(getUrl(response.getBody(),0), getArtists(response.getBody(),0));
+
+        return musicSearch;
     }
 
-    private ResponseEntity<SpotifySearchDto> nullVerification(ResponseEntity<SpotifySearchDto> response) {
+    private void nullVerification(ResponseEntity<SpotifySearchDto> response) {
         if(response.getBody().getTracks().getItems().toArray().length == 0){
-            response.getBody().setError("Music not founded");
-            ResponseEntity<SpotifySearchDto> errorResponse = new ResponseEntity<SpotifySearchDto>(response.getBody(), HttpStatus.NOT_FOUND);
+            throw new NotFoundException("Music not founded");
+        }
+    };
 
-            return errorResponse;
+    private String getUrl(SpotifySearchDto musicSearched, Integer track) {
+        return musicSearched.getTracks().getItems().get(track).getExternal_urls().getSpotify();
+    }
+
+    private String getArtists(SpotifySearchDto musicSearched, Integer track) {
+        List<String> artistsNames = new ArrayList<>();
+
+        for (Artists artists : musicSearched.getTracks().getItems().get(track).getArtists()) {
+            artistsNames.add(artists.getName());
         }
 
-        return response;
-    };
+        return String.join(", ", artistsNames);
+    }
 }

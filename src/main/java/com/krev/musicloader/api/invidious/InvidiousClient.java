@@ -1,6 +1,6 @@
 package com.krev.musicloader.api.invidious;
 
-import com.krev.musicloader.api.MusicSearchDto;
+import com.krev.musicloader.api.orchestrator.MusicSearchDto;
 
 import com.krev.musicloader.api.invidious.dto.SearchInvidiousDto;
 import com.krev.musicloader.exception.NotFoundException;
@@ -9,7 +9,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;

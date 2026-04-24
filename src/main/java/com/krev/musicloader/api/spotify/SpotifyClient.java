@@ -1,6 +1,6 @@
 package com.krev.musicloader.api.spotify;
 
-import com.krev.musicloader.api.MusicSearchDto;
+import com.krev.musicloader.api.orchestrator.MusicSearchDto;
 import com.krev.musicloader.api.spotify.dto.SearchDto.Artists;
 import com.krev.musicloader.api.spotify.dto.SpotifyAuthDto;
 import com.krev.musicloader.api.spotify.dto.SpotifySearchDto;

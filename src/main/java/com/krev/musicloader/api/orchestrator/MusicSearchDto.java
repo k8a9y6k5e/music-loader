@@ -1,4 +1,4 @@
-package com.krev.musicloader.api;
+package com.krev.musicloader.api.orchestrator;
 
 import lombok.Data;
 

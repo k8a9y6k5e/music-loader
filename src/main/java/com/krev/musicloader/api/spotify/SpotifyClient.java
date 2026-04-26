@@ -1,6 +1,7 @@
 package com.krev.musicloader.api.spotify;
 
-import com.krev.musicloader.api.orchestrator.MusicSearchDto;
+import com.krev.musicloader.api.client.MusicApiClient;
+import com.krev.musicloader.api.service.dto.MusicSearchDto;
 import com.krev.musicloader.api.spotify.dto.SearchDto.Artists;
 import com.krev.musicloader.api.spotify.dto.SpotifyAuthDto;
 import com.krev.musicloader.api.spotify.dto.SpotifySearchDto;
@@ -20,7 +21,7 @@ import java.util.Base64;
 import java.util.List;
 
 @Component
-public class SpotifyClient {
+public class SpotifyClient implements MusicApiClient {
     @Value("${spotify.client.id}")
     private String clientId;
 
@@ -96,7 +97,7 @@ public class SpotifyClient {
 
         nullVerification(response);
 
-        MusicSearchDto musicSearch = new MusicSearchDto(getUrl(response.getBody(),0), getArtists(response.getBody(),0));
+        MusicSearchDto musicSearch = new MusicSearchDto(getUrl(response.getBody(),0), getArtists(response.getBody(),0), getName(response.getBody(), 0));
 
         return musicSearch;
     }
@@ -119,5 +120,9 @@ public class SpotifyClient {
         }
 
         return String.join(", ", artistsNames);
+    }
+
+    private String getName(SpotifySearchDto musicSearched, Integer track) {
+        return musicSearched.getTracks().getItems().get(0).getName();
     }
 }

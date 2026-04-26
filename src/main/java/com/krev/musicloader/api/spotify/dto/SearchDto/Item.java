@@ -8,4 +8,5 @@ import java.util.List;
 public class Item {
     private ExternalUrls external_urls;
     private List<Artists> artists;
+    private String name;
 }

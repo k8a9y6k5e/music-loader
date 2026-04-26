@@ -5,5 +5,7 @@ import java.util.List;
 
 @Data
 public class SearchInvidiousDto {
-    private List<SearchDto> search;
+    private String videoId;
+    private String author;
+    private String title;
 }

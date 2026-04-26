@@ -49,9 +49,4 @@ public class MusicController {
     public ResponseEntity<MusicEntity> patchUpdate(@PathVariable Long id, @RequestBody @Valid PatchUpdateMusicDto dto) {
         return ResponseEntity.status(HttpStatus.OK).body(service.patchUpdate(id, dto));
     }
-
-    @PostMapping("/{id}")
-    public ResponseEntity<MusicEntity> nextMusic(@PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.nextMusicToSave(id));
-    }
 }

@@ -3,6 +3,7 @@ import com.krev.musicloader.api.service.dto.MusicSearchDto;
 import com.krev.musicloader.api.service.MusicSearchService;
 import com.krev.musicloader.exception.NotFoundException;
 import com.krev.musicloader.music.dto.CreateMusicDto;
+import com.krev.musicloader.music.dto.ListSearchedMusicDto;
 import com.krev.musicloader.music.dto.PatchUpdateMusicDto;
 import com.krev.musicloader.music.dto.PutUpdateMusicDto;
 import org.springframework.data.domain.Page;
@@ -11,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 
 import java.lang.Long;
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.Function;
 
 @Service
 public class MusicService {
@@ -18,22 +22,26 @@ public class MusicService {
     private MusicRepository musicRepository;
 
     @Autowired
-    private MusicSearchService orchestrator;
+    private MusicSearchService musicSearchService;
 
     public MusicEntity create(CreateMusicDto dto) {
         MusicEntity music = new MusicEntity();
 
-        MusicSearchDto musicSearch = orchestrator.callApi(dto.getName());
+        MusicSearchDto musicSearch = musicSearchService.search(dto.getName(), dto.getTrack());
 
-        music.setName(musicSearch.getName());
+        music.setName(musicSearch.name());
 
-        music.setUrl(musicSearch.getUrl());
+        music.setUrl(musicSearch.url());
 
-        music.setArtist(musicSearch.getArtists());
+        music.setArtist(musicSearch.artists());
 
         music.setSearchIndex(0);
 
         return musicRepository.save(music);
+    }
+
+    public List<MusicSearchDto> listMusicSearched (ListSearchedMusicDto dto) {
+        return musicSearchService.list(dto.getName());
     }
 
     public Page<MusicEntity> list(Pageable pageable) {
@@ -51,13 +59,13 @@ public class MusicService {
     public MusicEntity putUpdate (Long id, PutUpdateMusicDto dto) {
         MusicEntity result = search(id);
 
-        MusicSearchDto searchResponse = orchestrator.callApi(dto.getName());
+        MusicSearchDto searchResponse = musicSearchService.search(dto.getName(), dto.getTrack());
 
-        result.setName(dto.getName());
+        result.setName(searchResponse.name());
 
-        result.setUrl(searchResponse.getUrl());
+        result.setUrl(searchResponse.url());
 
-        result.setArtist(searchResponse.getArtists());
+        result.setArtist(searchResponse.artists());
 
         return musicRepository.save(result);
     }
@@ -69,11 +77,11 @@ public class MusicService {
             result.setName(dto.getName());
 
         if(dto.getResearch()) {
-            MusicSearchDto searchResponse = orchestrator.callApi(dto.getName());
+            MusicSearchDto searchResponse = musicSearchService.search(dto.getName(), dto.getTrack());
 
-            result.setUrl(searchResponse.getUrl());
+            result.setUrl(searchResponse.url());
 
-            result.setArtist(searchResponse.getArtists());
+            result.setArtist(searchResponse.artists());
         }
 
         return musicRepository.save(result);

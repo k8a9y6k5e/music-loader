@@ -14,10 +14,12 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class InvidiousClient implements MusicApiClient {
-    public MusicSearchDto searchMusic(String name) {
+    public MusicSearchDto searchMusic(String name, Integer track) {
         HttpEntity<Void> request = new HttpEntity<>(HttpHeaders.EMPTY);
 
         RestTemplate restTemplate = new RestTemplate();
@@ -39,9 +41,9 @@ public class InvidiousClient implements MusicApiClient {
 
         nullValidation(response.getBody());
 
-        String url = getUrl(response.getBody()[0].getVideoId());
+        String url = getUrl(response.getBody()[track].getVideoId());
 
-        MusicSearchDto musicSearch = new MusicSearchDto(url, getArtists(response.getBody(), 0), getName(response.getBody(), 0));
+        MusicSearchDto musicSearch = new MusicSearchDto(url, getArtists(response.getBody()[track]), getName(response.getBody()[track]));
 
         return musicSearch;
     }
@@ -55,11 +57,44 @@ public class InvidiousClient implements MusicApiClient {
         return "https://www.youtube.com/watch?v="+videoId;
     }
 
-    private String getArtists(SearchInvidiousDto[] searched, Integer track) {
-        return searched[track].getAuthor();
+    private String getArtists(SearchInvidiousDto searched) {
+        return searched.getAuthor();
     }
 
-    private String getName(SearchInvidiousDto[] searched, Integer track){
-        return searched[track].getTitle();
+    private String getName(SearchInvidiousDto searched){
+        return searched.getTitle();
+    }
+
+    public List<MusicSearchDto> listMusic(String name) {
+        HttpEntity request = new HttpEntity<>(HttpHeaders.EMPTY);
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        URI uri = UriComponentsBuilder
+                .fromUriString("https://inv.thepixora.com/api/v1/search")
+                .queryParam("q", name)
+                .queryParam("type", "video")
+                .build()
+                .encode()
+                .toUri();
+
+        ResponseEntity<SearchInvidiousDto[]> response = restTemplate.exchange(
+                uri,
+                HttpMethod.GET,
+                request,
+                SearchInvidiousDto[].class
+        );
+
+        nullValidation(response.getBody());
+
+        List<MusicSearchDto> musicList = new ArrayList<>();
+
+        for(SearchInvidiousDto searchedMusic : response.getBody()) {
+            String url = getUrl(searchedMusic.getVideoId());
+
+            musicList.add(new MusicSearchDto(url, getArtists(searchedMusic), getName(searchedMusic)));
+        }
+
+        return musicList;
     }
 }

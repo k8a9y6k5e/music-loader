@@ -5,6 +5,8 @@ import lombok.Data;
 
 @Data
 public class PutUpdateMusicDto {
-    @NotBlank
+    @NotBlank(message = "name of music can't be empty")
     private String name;
+    @NotBlank(message = "track of the music can't be empty")
+    private Integer track;
 }

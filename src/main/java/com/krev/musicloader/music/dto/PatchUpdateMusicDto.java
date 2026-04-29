@@ -9,8 +9,10 @@ public class PatchUpdateMusicDto {
 
     private Boolean research = false;
 
+    private Integer track;
+
     @AssertTrue(message = "At least one field must be provided")
     public boolean isAtLeastOneFieldPresent() {
-        return name != null || Boolean.TRUE.equals(research);
+        return name != null || Boolean.TRUE.equals(research) || track != null;
     }
 }

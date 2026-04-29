@@ -34,7 +34,7 @@ public class MusicController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    @GetMapping
+    @GetMapping("/saved")
     public ResponseEntity<Page<MusicEntity>> list(Pageable pageable) {
         Page<MusicEntity> result = service.list(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(result);

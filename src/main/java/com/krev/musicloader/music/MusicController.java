@@ -1,7 +1,10 @@
 package com.krev.musicloader.music;
+import com.krev.musicloader.api.service.dto.MusicSearchDto;
 import com.krev.musicloader.music.dto.CreateMusicDto;
+import com.krev.musicloader.music.dto.ListSearchedMusicDto;
 import com.krev.musicloader.music.dto.PatchUpdateMusicDto;
 import com.krev.musicloader.music.dto.PutUpdateMusicDto;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +12,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/music")
@@ -21,6 +26,12 @@ public class MusicController {
     public ResponseEntity<MusicEntity> create(@RequestBody @Valid CreateMusicDto dto) {
         MusicEntity result = service.create(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<MusicSearchDto>> searchMusic(@ModelAttribute @Valid ListSearchedMusicDto dto) {
+        List<MusicSearchDto> result = service.listMusicSearched(dto);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     @GetMapping

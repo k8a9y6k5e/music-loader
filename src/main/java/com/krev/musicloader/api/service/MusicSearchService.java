@@ -10,14 +10,12 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class MusicSearchService {
     @Autowired
-    private MusicSearchRepository orchestratorRepository;
+    private MusicSearchRepository musicSearchRepository;
 
     @Autowired
     private SpotifyClient spotifyClient;
@@ -33,14 +31,31 @@ public class MusicSearchService {
         adapters.put("client2", invidiousClient);
     }
 
-    public MusicSearchDto callApi(String name) {
+    public MusicSearchDto search(String name, Integer track) {
         Exception lastException = null;
 
-        for(MusicSearchEntity row : orchestratorRepository.findByActivityTrue(Sort.by("priority"))) {
+        for(MusicSearchEntity row : musicSearchRepository.findByActivityTrue(Sort.by("priority"))) {
             try {
                 MusicApiClient api = adapters.get(row.getName());
 
-                return api.searchMusic(name);
+                return api.searchMusic(name, track);
+            }
+            catch (Exception err) {
+                lastException = err;
+            }
+        }
+
+        throw new RuntimeException("None API found the music entered", lastException);
+    }
+
+    public List<MusicSearchDto> list(String name) {
+        Exception lastException = null;
+
+        for(MusicSearchEntity row : musicSearchRepository.findByActivityTrue(Sort.by("priority"))) {
+            try {
+                MusicApiClient api = adapters.get(row.getName());
+
+                return  api.listMusic(name);
             }
             catch (Exception err) {
                 lastException = err;

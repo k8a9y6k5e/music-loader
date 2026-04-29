@@ -20,7 +20,6 @@ import java.util.*;
 
 @Component
 public class SpotifyClient implements MusicApiClient {
-    private final NullValidator nullValidator;
     @Value("${spotify.client.id}")
     private String clientId;
 
@@ -28,10 +27,6 @@ public class SpotifyClient implements MusicApiClient {
     private String clientSecret;
 
     private String credentials;
-
-    public SpotifyClient(NullValidator nullValidator) {
-        this.nullValidator = nullValidator;
-    }
 
     private void createCredentials() {
         String auth = clientId + ":" + clientSecret;

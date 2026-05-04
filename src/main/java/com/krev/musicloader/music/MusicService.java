@@ -35,8 +35,6 @@ public class MusicService {
 
         music.setArtist(musicSearch.artists());
 
-        music.setSearchIndex(0);
-
         return musicRepository.save(music);
     }
 
